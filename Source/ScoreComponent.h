@@ -22,6 +22,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
+#define LOWNOTE 51
+#define HIGHNOTE 90
 //[/Headers]
 
 
@@ -46,7 +48,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void setFile(const File& file);                 // set and parse the score
-    void setRange(Range<int> newRange);
+    void setRange(int totalTime);
     void timerCallback() override;
     // below should be private methods
 
@@ -65,7 +67,8 @@ private:
     DrawableRectangle currentPositionMarker;        // cursor to follow the score
     Array<int> notes;                               // score notes buffer
     Array<int> times;                              // score notes corresponding length
-    Range<int> visibleRange;
+    OwnedArray<DrawableRectangle> scores;
+    int visibleRange;
     bool isFollowingScore;
     File lastFileDropped;
     float currentTime;

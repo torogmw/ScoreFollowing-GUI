@@ -73,6 +73,7 @@ ScoreComponent::ScoreComponent ()
     isFollowingScore = false;
     currentPositionMarker.setFill (Colours::orangered.withAlpha (0.85f));
     addAndMakeVisible (currentPositionMarker);
+    visibleRange = 0;
     //[/Constructor]
 }
 
@@ -117,9 +118,11 @@ void ScoreComponent::paint (Graphics& g)
 
     if (notes.size() > 0)
     {
-        Rectangle<int> thumbArea (getLocalBounds());
-
-
+        for (int i = 0; i<scores.size(); i++)
+        {
+            scores[i]->setFill (Colours::black.withAlpha (0.85f));
+            scores[i]->setVisible(true);
+        }
     }
     else
     {
@@ -150,6 +153,7 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_resetButton] -- add your button handler code here..
         notes.clear();
         times.clear();
+        scores.clear();
         stopTimer();
         updateCursorPosition();
         repaint();
@@ -184,7 +188,8 @@ void ScoreComponent::setFile(const juce::File &file)
 {
     notes.clear();
     times.clear();
-    int totalLength = 0.0;
+    scores.clear();
+    int totalLength = 0;
     scoreLabel->setText(file.getFileNameWithoutExtension(), dontSendNotification);
     StringArray rawText;
     file.readLines(rawText);
@@ -196,22 +201,32 @@ void ScoreComponent::setFile(const juce::File &file)
         times.insert(i, tokens[1].getIntValue());
         totalLength+=tokens[1].getIntValue();
     }
-    const Range<int> newRange(0, totalLength);
-    setRange(newRange);
+    setRange(totalLength);
     startTimer(25);
 }
-void ScoreComponent::setRange(Range<int> newRange)
+void ScoreComponent::setRange(int totalTime)
 {
-    visibleRange = newRange;
+    visibleRange = totalTime;                                   // total time meters?
     // scorllbar maybe added here
-    updateCursorPosition();
+    // calculate position, height and width of the score rectangle based on the total time
+    float noteYInterval = 360/(HIGHNOTE-LOWNOTE+1);
+    float noteXInterval = 780/totalTime;
+    int noteIndex = 0;
+    for (int i = 0; i<notes.size(); i++)
+    {
+        DrawableRectangle* temp = new DrawableRectangle();                             // current inserting note
+        addAndMakeVisible(temp);
+        temp->setRectangle(Rectangle<float> (10+noteIndex*noteXInterval, 390-(notes[i]-LOWNOTE)*noteYInterval, noteXInterval*times[i], noteYInterval));
+        scores.add(temp);
+        noteIndex+=times[i];
+    }
     repaint();
 
 }
 
 float ScoreComponent::timeTox (const double time) const
 {
-    return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+    //return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
 }
 
 void ScoreComponent::updateCursorPosition()
