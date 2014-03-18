@@ -35,6 +35,7 @@
                                                                     //[/Comments]
 */
 class ScoreComponent  : public Component,
+                        public Timer,
                         public ButtonListener
 {
 public:
@@ -45,6 +46,12 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void setFile(const File& file);                 // set and parse the score
+    void setRange(Range<int> newRange);
+    void timerCallback() override;
+    // below should be private methods
+
+    float timeTox(const double time) const;
+    void updateCursorPosition();
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -57,17 +64,18 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DrawableRectangle currentPositionMarker;        // cursor to follow the score
     Array<int> notes;                               // score notes buffer
-    Array<int> times;                              // score notes' corresponding length
+    Array<int> times;                              // score notes corresponding length
     Range<int> visibleRange;
     bool isFollowingScore;
     File lastFileDropped;
-    
+    float currentTime;
+
+
     //[/UserVariables]
 
     //==============================================================================
     ScopedPointer<TextButton> resetButton;
     ScopedPointer<TextButton> loadButton;
-    ScopedPointer<TextButton> modelButton;
     ScopedPointer<Label> scoreLabel;
     ScopedPointer<Label> stateLabel;
     ScopedPointer<ToggleButton> modeToggleButton;

@@ -64,6 +64,12 @@ public:
     static const int musictremolo_pngSize;
     static const char* musictrill_png;
     static const int musictrill_pngSize;
+    static const char* musictremololighted_png;
+    static const int musictremololighted_pngSize;
+    static const char* musicpizzicatolighted_png;
+    static const int musicpizzicatolighted_pngSize;
+    static const char* musictrilllighted_png;
+    static const int musictrilllighted_pngSize;
 
 
 private:

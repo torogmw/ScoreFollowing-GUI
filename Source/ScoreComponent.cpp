@@ -41,14 +41,8 @@ ScoreComponent::ScoreComponent ()
     loadButton->addListener (this);
     loadButton->setColour (TextButton::buttonColourId, Colour (0xfff8a970));
 
-    addAndMakeVisible (modelButton = new TextButton ("model"));
-    modelButton->setButtonText (TRANS("Model"));
-    modelButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight | Button::ConnectedOnTop | Button::ConnectedOnBottom);
-    modelButton->addListener (this);
-    modelButton->setColour (TextButton::buttonColourId, Colour (0xfff8a970));
-
     addAndMakeVisible (scoreLabel = new Label ("new label",
-                                               TRANS("Score ")));
+                                               TRANS("Title")));
     scoreLabel->setFont (Font ("Helvetica", 20.00f, Font::plain));
     scoreLabel->setJustificationType (Justification::centred);
     scoreLabel->setEditable (false, false, false);
@@ -56,8 +50,7 @@ ScoreComponent::ScoreComponent ()
     scoreLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (stateLabel = new Label ("state label",
-                                               TRANS("hidden \n"
-                                               "state")));
+                                               TRANS("hidden state")));
     stateLabel->setFont (Font (15.00f, Font::plain));
     stateLabel->setJustificationType (Justification::centred);
     stateLabel->setEditable (false, false, false);
@@ -78,6 +71,8 @@ ScoreComponent::ScoreComponent ()
 
     //[Constructor] You can add your own custom stuff here..
     isFollowingScore = false;
+    currentPositionMarker.setFill (Colours::orangered.withAlpha (0.85f));
+    addAndMakeVisible (currentPositionMarker);
     //[/Constructor]
 }
 
@@ -88,7 +83,6 @@ ScoreComponent::~ScoreComponent()
 
     resetButton = nullptr;
     loadButton = nullptr;
-    modelButton = nullptr;
     scoreLabel = nullptr;
     stateLabel = nullptr;
     modeToggleButton = nullptr;
@@ -106,18 +100,42 @@ void ScoreComponent::paint (Graphics& g)
 
     g.fillAll (Colour (0x8ffefefe));
 
+    g.setColour (Colours::grey);
+    g.fillRect (10, 30, 780, 2);
+
+    g.setColour (Colours::grey);
+    g.fillRect (10, 390, 780, 2);
+
+    g.setColour (Colours::grey);
+    g.fillRect (10, 30, 2, 360);
+
+    g.setColour (Colours::grey);
+    g.fillRect (790, 30, 2, 360);
+
     //[UserPaint] Add your own custom painting code here..
+    g.setColour (Colours::black);
+
+    if (notes.size() > 0)
+    {
+        Rectangle<int> thumbArea (getLocalBounds());
+
+
+    }
+    else
+    {
+        g.setFont (20.0f);
+        g.drawFittedText ("No score selected", getLocalBounds(), Justification::centred, 2);
+    }
     //[/UserPaint]
 }
 
 void ScoreComponent::resized()
 {
-    resetButton->setBounds (696, 16, 86, 24);
-    loadButton->setBounds (696, 40, 86, 24);
-    modelButton->setBounds (696, 64, 86, 24);
-    scoreLabel->setBounds (328, 24, 176, 24);
-    stateLabel->setBounds (8, 16, 72, 32);
-    modeToggleButton->setBounds (0, 368, 72, 48);
+    resetButton->setBounds (624, 0, 86, 24);
+    loadButton->setBounds (712, 0, 86, 24);
+    scoreLabel->setBounds (300, 0, 200, 24);
+    stateLabel->setBounds (0, 0, 120, 24);
+    modeToggleButton->setBounds (0, 392, 104, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -130,6 +148,11 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == resetButton)
     {
         //[UserButtonCode_resetButton] -- add your button handler code here..
+        notes.clear();
+        times.clear();
+        stopTimer();
+        updateCursorPosition();
+        repaint();
         //[/UserButtonCode_resetButton]
     }
     else if (buttonThatWasClicked == loadButton)
@@ -142,11 +165,6 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
             setFile(chooser.getResult());
         }
         //[/UserButtonCode_loadButton]
-    }
-    else if (buttonThatWasClicked == modelButton)
-    {
-        //[UserButtonCode_modelButton] -- add your button handler code here..
-        //[/UserButtonCode_modelButton]
     }
     else if (buttonThatWasClicked == modeToggleButton)
     {
@@ -166,6 +184,7 @@ void ScoreComponent::setFile(const juce::File &file)
 {
     notes.clear();
     times.clear();
+    int totalLength = 0.0;
     scoreLabel->setText(file.getFileNameWithoutExtension(), dontSendNotification);
     StringArray rawText;
     file.readLines(rawText);
@@ -175,8 +194,37 @@ void ScoreComponent::setFile(const juce::File &file)
         tokens.addTokens (rawText[i], " ", "\"");
         notes.insert(i, tokens[0].getIntValue());
         times.insert(i, tokens[1].getIntValue());
+        totalLength+=tokens[1].getIntValue();
     }
+    const Range<int> newRange(0, totalLength);
+    setRange(newRange);
+    startTimer(25);
 }
+void ScoreComponent::setRange(Range<int> newRange)
+{
+    visibleRange = newRange;
+    // scorllbar maybe added here
+    updateCursorPosition();
+    repaint();
+
+}
+
+float ScoreComponent::timeTox (const double time) const
+{
+    return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
+}
+
+void ScoreComponent::updateCursorPosition()
+{
+    currentPositionMarker.setVisible(notes.size()>0);
+    currentPositionMarker.setRectangle (Rectangle<float> (timeTox(5.0) - 0.75f, 0,
+                                                          1.5f, (float)getHeight()));
+}
+void ScoreComponent::timerCallback()
+{
+
+}
+
 //[/MiscUserCode]
 
 
@@ -190,31 +238,33 @@ void ScoreComponent::setFile(const juce::File &file)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ScoreComponent" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="800" initialHeight="420">
-  <BACKGROUND backgroundColour="8ffefefe"/>
+                 parentClasses="public Component, public Timer" constructorParams=""
+                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
+                 overlayOpacity="0.330" fixedSize="1" initialWidth="800" initialHeight="420">
+  <BACKGROUND backgroundColour="8ffefefe">
+    <RECT pos="10 30 780 1.5" fill="solid: ff808080" hasStroke="0"/>
+    <RECT pos="10 390 780 1.5" fill="solid: ff808080" hasStroke="0"/>
+    <RECT pos="10 30 1.5 360" fill="solid: ff808080" hasStroke="0"/>
+    <RECT pos="790 30 1.5 360" fill="solid: ff808080" hasStroke="0"/>
+  </BACKGROUND>
   <TEXTBUTTON name="reset" id="6108542cce1ccb2a" memberName="resetButton" virtualName=""
-              explicitFocusOrder="0" pos="696 16 86 24" bgColOff="fff8a970"
+              explicitFocusOrder="0" pos="624 0 86 24" bgColOff="fff8a970"
               buttonText="Reset" connectedEdges="15" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="load" id="185a657117448487" memberName="loadButton" virtualName=""
-              explicitFocusOrder="0" pos="696 40 86 24" bgColOff="fff8a970"
+              explicitFocusOrder="0" pos="712 0 86 24" bgColOff="fff8a970"
               buttonText="Load" connectedEdges="15" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="model" id="a20e7574d53b5cb1" memberName="modelButton" virtualName=""
-              explicitFocusOrder="0" pos="696 64 86 24" bgColOff="fff8a970"
-              buttonText="Model" connectedEdges="15" needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="9ade6abaa6eb85fe" memberName="scoreLabel"
-         virtualName="" explicitFocusOrder="0" pos="328 24 176 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Score " editableSingleClick="0" editableDoubleClick="0"
+         virtualName="" explicitFocusOrder="0" pos="300 0 200 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="Title" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Helvetica" fontsize="20" bold="0"
          italic="0" justification="36"/>
   <LABEL name="state label" id="37d42797bdc7d218" memberName="stateLabel"
-         virtualName="" explicitFocusOrder="0" pos="8 16 72 32" edTextCol="ff000000"
-         edBkgCol="0" labelText="hidden &#10;state" editableSingleClick="0"
+         virtualName="" explicitFocusOrder="0" pos="0 0 120 24" edTextCol="ff000000"
+         edBkgCol="0" labelText="hidden state" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15" bold="0" italic="0" justification="36"/>
   <TOGGLEBUTTON name="nide toggle button" id="48f1b565107c51d0" memberName="modeToggleButton"
-                virtualName="" explicitFocusOrder="0" pos="0 368 72 48" buttonText="follow score"
+                virtualName="" explicitFocusOrder="0" pos="0 392 104 24" buttonText="follow score"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
