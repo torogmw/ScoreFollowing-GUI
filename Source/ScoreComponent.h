@@ -44,7 +44,7 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setFile(const File& file);  // set and parse the score
+    void setFile(const File& file);                 // set and parse the score
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -55,7 +55,13 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    DrawableRectangle currentPositionMarker;
+    DrawableRectangle currentPositionMarker;        // cursor to follow the score
+    Array<int> notes;                               // score notes buffer
+    Array<int> times;                              // score notes' corresponding length
+    Range<int> visibleRange;
+    bool isFollowingScore;
+    File lastFileDropped;
+    
     //[/UserVariables]
 
     //==============================================================================

@@ -77,6 +77,7 @@ ScoreComponent::ScoreComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
+    isFollowingScore = false;
     //[/Constructor]
 }
 
@@ -134,6 +135,12 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == loadButton)
     {
         //[UserButtonCode_loadButton] -- add your button handler code here..
+        FileChooser chooser (("Choose score file to open"),File::nonexistent,"*",true);
+        chooser.browseForFileToOpen();
+        if(chooser.getResult().exists())
+        {
+            setFile(chooser.getResult());
+        }
         //[/UserButtonCode_loadButton]
     }
     else if (buttonThatWasClicked == modelButton)
@@ -144,6 +151,7 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == modeToggleButton)
     {
         //[UserButtonCode_modeToggleButton] -- add your button handler code here..
+        isFollowingScore = modeToggleButton->getToggleState();
         //[/UserButtonCode_modeToggleButton]
     }
 
@@ -154,6 +162,21 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+void ScoreComponent::setFile(const juce::File &file)
+{
+    notes.clear();
+    times.clear();
+    scoreLabel->setText(file.getFileNameWithoutExtension(), dontSendNotification);
+    StringArray rawText;
+    file.readLines(rawText);
+    for(int i = 0; i<rawText.size(); i++)
+    {
+        StringArray tokens;
+        tokens.addTokens (rawText[i], " ", "\"");
+        notes.insert(i, tokens[0].getIntValue());
+        times.insert(i, tokens[1].getIntValue());
+    }
+}
 //[/MiscUserCode]
 
 
