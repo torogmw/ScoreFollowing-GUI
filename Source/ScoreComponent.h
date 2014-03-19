@@ -52,8 +52,7 @@ public:
     void timerCallback() override;
     // below should be private methods
 
-    float timeTox(const double time) const;
-    void updateCursorPosition();
+    void updateCursorPosition(int currentTime);
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -72,7 +71,7 @@ private:
     bool isFollowingScore;
     File lastFileDropped;
     float currentTime;
-
+    
 
     //[/UserVariables]
 

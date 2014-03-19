@@ -155,7 +155,7 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
         times.clear();
         scores.clear();
         stopTimer();
-        updateCursorPosition();
+        updateCursorPosition(0);
         repaint();
         //[/UserButtonCode_resetButton]
     }
@@ -210,7 +210,7 @@ void ScoreComponent::setRange(int totalTime)
     // scorllbar maybe added here
     // calculate position, height and width of the score rectangle based on the total time
     float noteYInterval = 360/(HIGHNOTE-LOWNOTE+1);
-    float noteXInterval = 780/totalTime;
+    float noteXInterval = 780/visibleRange;
     int noteIndex = 0;
     for (int i = 0; i<notes.size(); i++)
     {
@@ -220,24 +220,28 @@ void ScoreComponent::setRange(int totalTime)
         scores.add(temp);
         noteIndex+=times[i];
     }
+    updateCursorPosition(1);        // start at the very beginning
     repaint();
 
 }
 
-float ScoreComponent::timeTox (const double time) const
-{
-    //return getWidth() * (float) ((time - visibleRange.getStart()) / (visibleRange.getLength()));
-}
 
-void ScoreComponent::updateCursorPosition()
+void ScoreComponent::updateCursorPosition(int currentTime)
 {
-    currentPositionMarker.setVisible(notes.size()>0);
-    currentPositionMarker.setRectangle (Rectangle<float> (timeTox(5.0) - 0.75f, 0,
-                                                          1.5f, (float)getHeight()));
+    if(notes.size()>0)
+    {
+        float noteXInterval = 780/visibleRange;
+        currentPositionMarker.setVisible(true);
+        currentPositionMarker.setRectangle (Rectangle<float> (10+noteXInterval*currentTime,30,2,360));
+    }
+    else
+    {
+        currentPositionMarker.setVisible(false);
+    }
 }
 void ScoreComponent::timerCallback()
 {
-
+    
 }
 
 //[/MiscUserCode]

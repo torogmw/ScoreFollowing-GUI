@@ -52,7 +52,7 @@ MainComponent::MainComponent ()
     trillToggle->addListener (this);
 
     addAndMakeVisible (inputSettingComboox = new ComboBox ("inputSetting"));
-    inputSettingComboox->setEditableText (false);
+    inputSettingComboox->setEditableText (true);
     inputSettingComboox->setJustificationType (Justification::centredLeft);
     inputSettingComboox->setTextWhenNothingSelected (String::empty);
     inputSettingComboox->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
@@ -135,6 +135,15 @@ MainComponent::MainComponent ()
     isTremoloToggled = false;
     isTrillToggled = false;
     isPizzToggled = false;
+    midiOut = new MidiOut();
+    deviceManager.initialise(2, /* number of input channels */
+                             2, /* number of output channels */
+                             0, /* no XML settings*/
+                             true, /* select default device on failure */
+                             String::empty, /* preferred device name */
+                             0 /* preferred setup options */);
+    deviceManager.setDefaultMidiOutput("from violinTrigger");
+    startTimer(25);
     //[/Constructor]
 }
 
@@ -159,7 +168,9 @@ MainComponent::~MainComponent()
     fileModeToggle = nullptr;
 
 
-    //[Destructor]. You can add your own custom destruction code here..
+    //[Destructor]. You can add your own custom destruction code here..]
+    midiOut = nullptr;
+    inputSource = nullptr;
     //[/Destructor]
 }
 
@@ -316,11 +327,27 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == liveModeToggle)
     {
         //[UserButtonCode_liveModeToggle] -- add your button handler code here..
+        inputSource = nullptr;
+        bool state = liveModeToggle->getToggleState();
+        fileModeToggle->setToggleState(!state, dontSendNotification);
+        if(state)
+        {
+            // init the live audio input here
+            inputSource = new AudioInputSource(deviceManager,0);
+        }
         //[/UserButtonCode_liveModeToggle]
     }
     else if (buttonThatWasClicked == fileModeToggle)
     {
         //[UserButtonCode_fileModeToggle] -- add your button handler code here..
+        inputSource= nullptr;
+        bool state = fileModeToggle->getToggleState();
+        liveModeToggle->setToggleState(!state, dontSendNotification);
+        if(state)
+        {
+            // init the file input here
+        }
+        
         //[/UserButtonCode_fileModeToggle]
     }
 
@@ -336,6 +363,13 @@ void MainComponent::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     if (comboBoxThatHasChanged == inputSettingComboox)
     {
         //[UserComboBoxCode_inputSettingComboox] -- add your combo box handling code here..
+        AudioDeviceManager::AudioDeviceSetup config;
+        deviceManager.getAudioDeviceSetup(config);
+        String error;
+        config.inputDeviceName = inputSettingComboox->getSelectedId() < 0 ? String::empty
+        :inputSettingComboox->getText();
+        error = deviceManager.setAudioDeviceSetup (config, true);
+        std::cout<<"select audio input: "<< inputSettingComboox->getText() << std::endl;
         //[/UserComboBoxCode_inputSettingComboox]
     }
 
@@ -361,6 +395,16 @@ void MainComponent::sliderValueChanged (Slider* sliderThatWasMoved)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+void MainComponent::timerCallback()
+{
+    // this time is used for UI update
+    inputSettingComboox->clear();
+    AudioIODeviceType* const type = deviceManager.getCurrentDeviceTypeObject();
+    const StringArray devs(type->getDeviceNames(true));
+    for (int i = 0; i < devs.size(); ++i)
+        inputSettingComboox->addItem (devs[i], i + 1);
+}
+
 //[/MiscUserCode]
 
 

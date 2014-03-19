@@ -23,6 +23,8 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "ScoreComponent.h"
+#include "AudioInputSource.h"
+#include "MidiOut.h"
 //[/Headers]
 
 
@@ -38,7 +40,8 @@
 class MainComponent  : public Component,
                        public ButtonListener,
                        public ComboBoxListener,
-                       public SliderListener
+                       public SliderListener,
+                       public Timer
 {
 public:
     //==============================================================================
@@ -47,6 +50,7 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    void timerCallback();
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -77,6 +81,9 @@ private:
     bool isTremoloToggled;
     bool isPizzToggled;
     bool isTrillToggled;
+    AudioDeviceManager deviceManager;
+    ScopedPointer<AudioInputSource> inputSource;
+    ScopedPointer<MidiOut> midiOut;
     //[/UserVariables]
 
     //==============================================================================
