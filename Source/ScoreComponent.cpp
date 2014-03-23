@@ -242,7 +242,7 @@ void ScoreComponent::updateCursorPosition(int currentTime)
 }
 void ScoreComponent::timerCallback()
 {
-
+    
 }
 
 //[/MiscUserCode]

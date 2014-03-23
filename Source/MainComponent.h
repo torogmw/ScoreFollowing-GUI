@@ -51,6 +51,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void timerCallback();
+    void updateToggleState(); // update the technique detection
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -84,6 +85,9 @@ private:
     AudioDeviceManager deviceManager;
     ScopedPointer<AudioInputSource> inputSource;
     ScopedPointer<MidiOut> midiOut;
+    Image cachedImage_musicpizzicatolighted_png;
+    Image cachedImage_musictremololighted_png;
+    Image cachedImage_musictrilllighted_png;
     //[/UserVariables]
 
     //==============================================================================

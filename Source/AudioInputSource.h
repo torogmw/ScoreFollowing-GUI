@@ -34,10 +34,10 @@ public:
     void audioDeviceStopped();
     void setFile(File audioFile);
     void filePlayingControl();
-    bool setToggle();
+    void setToggle(int index);
     int getCurrentPitch() const;
+    int getCurrentTech() const;
     void violinTracking(float* data);
-    
     
     
     

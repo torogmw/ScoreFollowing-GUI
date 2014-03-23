@@ -57,6 +57,26 @@ void AudioInputSource::setFile(File audioFile)
     }
 }
 
+void AudioInputSource::setToggle(int index)
+{
+    switch (index) {
+        case 0:
+            vc->toggleState.push_back(0);           // pizzicato
+            break;
+        case 2:
+            vc->toggleState.push_back(2);           // tremolo
+            break;
+        case 3:
+            vc->toggleState.push_back(3);           // trill
+            break;
+        case 5:
+            vc->toggleState.clear();
+        default:
+            vc->toggleState.clear();
+            break;
+    }
+}
+
 int AudioInputSource::getCurrentPitch() const
 {
     if (vc->pitch<45 || vc->pitch>92)
@@ -153,6 +173,18 @@ void AudioInputSource::violinTracking(float* data)
     vc->getReady(data);
     
 //    delete d;
+}
+
+int AudioInputSource::getCurrentTech() const
+{
+    if (vc->classLabel == "pizzicato")
+        return 0;
+    else if (vc->classLabel == "tremolo")
+        return 2;
+    else if (vc->classLabel == "trill")
+        return 3;
+    else
+        return 5;
 }
 
 void AudioInputSource::audioDeviceAboutToStart(AudioIODevice* device)

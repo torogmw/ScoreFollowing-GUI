@@ -127,6 +127,9 @@ MainComponent::MainComponent ()
     cachedImage_musictrill_png = ImageCache::getFromMemory (musictrill_png, musictrill_pngSize);
 
     //[UserPreSize]
+    cachedImage_musicpizzicatolighted_png = ImageCache::getFromMemory (musicpizzicatolighted_png, musicpizzicatolighted_pngSize);
+    cachedImage_musictremololighted_png = ImageCache::getFromMemory (musictremololighted_png, musictremololighted_pngSize);
+    cachedImage_musictrilllighted_png = ImageCache::getFromMemory (musictrilllighted_png, musictrilllighted_pngSize);
     pizzToggle->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
     tremoloToggle->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
     trillToggle->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
@@ -250,24 +253,57 @@ void MainComponent::paint (Graphics& g)
     //[UserPaint] Add your own custom painting code here..
     if(isPizzToggled)
     {
-        g.setColour (Colours::black.withAlpha (1.00f));
-        g.drawImage (cachedImage_musicpizzicato_png,
+        if(inputSource->getCurrentTech() == 0)
+        {
+            g.setColour (Colours::yellow.withAlpha (1.00f));
+            g.drawImage (cachedImage_musicpizzicato_png,
+                         896, 66, 100, 100,
+            0, 0, cachedImage_musicpizzicatolighted_png.getWidth(), cachedImage_musicpizzicato_png.getHeight());
+
+        }
+        else
+        {
+            g.setColour (Colours::black.withAlpha (1.00f));
+            g.drawImage (cachedImage_musicpizzicato_png,
                      896, 66, 100, 100,
                      0, 0, cachedImage_musicpizzicato_png.getWidth(), cachedImage_musicpizzicato_png.getHeight());
+        }
     }
     if(isTremoloToggled)
     {
-        g.setColour (Colours::black.withAlpha (1.00f));
-        g.drawImage (cachedImage_musictremolo_png,
+        if(inputSource->getCurrentTech() == 2)
+        {
+            g.setColour (Colours::black.withAlpha (1.00f));
+            g.drawImage (cachedImage_musictremololighted_png,
+                         896, 226, 100, 100,
+                         0, 0, cachedImage_musictremololighted_png.getWidth(), cachedImage_musictremololighted_png.getHeight());
+            
+        }
+        else
+        {
+            g.setColour (Colours::black.withAlpha (1.00f));
+            g.drawImage (cachedImage_musictremolo_png,
                  896, 226, 100, 100,
                  0, 0, cachedImage_musictremolo_png.getWidth(), cachedImage_musictremolo_png.getHeight());
+        }
     }
     if(isTrillToggled)
     {
-    g.setColour (Colours::black.withAlpha (1.00f));
-    g.drawImage (cachedImage_musictrill_png,
+        if(inputSource->getCurrentTech() == 3)
+        {
+            g.setColour (Colours::yellow.withAlpha (1.00f));
+            g.drawImage (cachedImage_musictrilllighted_png,
+                         896, 410, 100, 100,
+                         0, 0, cachedImage_musictrilllighted_png.getWidth(), cachedImage_musicpizzicato_png.getHeight());
+            
+        }
+        else
+        {
+            g.setColour (Colours::black.withAlpha (1.00f));
+            g.drawImage (cachedImage_musictrill_png,
                  896, 410, 100, 100,
                  0, 0, cachedImage_musictrill_png.getWidth(), cachedImage_musictrill_png.getHeight());
+        }
     }
     //[/UserPaint]
 }
@@ -302,6 +338,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_pizzToggle] -- add your button handler code here..
         isPizzToggled = pizzToggle->getToggleState();
+        updateToggleState();
         repaint();
         //[/UserButtonCode_pizzToggle]
     }
@@ -309,6 +346,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_tremoloToggle] -- add your button handler code here..
         isTremoloToggled = tremoloToggle->getToggleState();
+        updateToggleState();
         repaint();
         //[/UserButtonCode_tremoloToggle]
     }
@@ -316,6 +354,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_trillToggle] -- add your button handler code here..
         isTrillToggled = trillToggle->getToggleState();
+        updateToggleState();
         repaint();
         //[/UserButtonCode_trillToggle]
     }
@@ -433,6 +472,21 @@ void MainComponent::timerCallback()
         // get pitch value and possible technique detection
         String currentNote = midiOut->getPitchName(inputSource->getCurrentPitch());
         pitchLabel->setText(currentNote, dontSendNotification);
+        repaint();
+    }
+}
+
+void MainComponent::updateToggleState()
+{
+    if(inputSource)
+    {
+        inputSource->setToggle(5);
+        if (pizzToggle->getToggleState())
+            inputSource->setToggle(0);
+        if (tremoloToggle->getToggleState())
+            inputSource->setToggle(2);
+        if (trillToggle->getToggleState())
+            inputSource->setToggle(3);
     }
 }
 
