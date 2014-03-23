@@ -449,6 +449,8 @@ void MainComponent::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == thresholdSlider)
     {
         //[UserSliderCode_thresholdSlider] -- add your slider handling code here..
+        if (inputSource)
+            inputSource->setThredhold(thresholdSlider->getValue());
         //[/UserSliderCode_thresholdSlider]
     }
 

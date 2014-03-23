@@ -37,6 +37,7 @@ public:
     void setToggle(int index);
     int getCurrentPitch() const;
     int getCurrentTech() const;
+    void setThredhold(float sliderValue);
     void violinTracking(float* data);
     
     

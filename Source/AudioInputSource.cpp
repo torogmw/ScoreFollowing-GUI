@@ -187,6 +187,12 @@ int AudioInputSource::getCurrentTech() const
         return 5;
 }
 
+void AudioInputSource::setThredhold(float sliderValue)
+{
+    std::cout<<"set threshold: "<<sliderValue<<std::endl;
+    vc->threshold = sliderValue;
+}
+
 void AudioInputSource::audioDeviceAboutToStart(AudioIODevice* device)
 {
     if (choice == FILE_INPUT)
