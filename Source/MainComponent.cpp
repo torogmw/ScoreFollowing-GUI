@@ -98,13 +98,13 @@ MainComponent::MainComponent ()
     messageButton->setColour (TextButton::buttonColourId, Colour (0x91ff7f50));
     messageButton->setColour (TextButton::buttonOnColourId, Colours::coral);
 
-    addAndMakeVisible (label = new Label ("new label",
-                                          TRANS("null")));
-    label->setFont (Font (39.20f, Font::plain));
-    label->setJustificationType (Justification::centred);
-    label->setEditable (false, false, false);
-    label->setColour (TextEditor::textColourId, Colours::black);
-    label->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible (pitchLabel = new Label ("pitch label",
+                                               TRANS("Null")));
+    pitchLabel->setFont (Font (20.00f, Font::plain));
+    pitchLabel->setJustificationType (Justification::centred);
+    pitchLabel->setEditable (false, false, false);
+    pitchLabel->setColour (TextEditor::textColourId, Colours::black);
+    pitchLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (liveModeToggle = new ToggleButton ("live mode toggle"));
     liveModeToggle->setButtonText (TRANS("Live"));
@@ -113,6 +113,13 @@ MainComponent::MainComponent ()
     addAndMakeVisible (fileModeToggle = new ToggleButton ("file mode toggle"));
     fileModeToggle->setButtonText (TRANS("File"));
     fileModeToggle->addListener (this);
+
+    addAndMakeVisible (playButton = new TextButton ("play Button"));
+    playButton->setButtonText (TRANS("play"));
+    playButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight | Button::ConnectedOnTop | Button::ConnectedOnBottom);
+    playButton->addListener (this);
+    playButton->setColour (TextButton::buttonColourId, Colour (0x91ff7f50));
+    playButton->setColour (TextButton::buttonOnColourId, Colours::coral);
 
     cachedImage_background_png = ImageCache::getFromMemory (background_png, background_pngSize);
     cachedImage_musicpizzicato_png = ImageCache::getFromMemory (musicpizzicato_png, musicpizzicato_pngSize);
@@ -126,6 +133,7 @@ MainComponent::MainComponent ()
     fileModeToggle->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
     liveModeToggle->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
     inputSettingComboox->setColour(ComboBox::buttonColourId, Colour (0x91ff7f50));
+    playButton->setVisible(false);
     //[/UserPreSize]
 
     setSize (1152, 720);
@@ -163,12 +171,13 @@ MainComponent::~MainComponent()
     ipButton = nullptr;
     portButton = nullptr;
     messageButton = nullptr;
-    label = nullptr;
+    pitchLabel = nullptr;
     liveModeToggle = nullptr;
     fileModeToggle = nullptr;
+    playButton = nullptr;
 
 
-    //[Destructor]. You can add your own custom destruction code here..]
+    //[Destructor]. You can add your own custom destruction code here..
     midiOut = nullptr;
     inputSource = nullptr;
     //[/Destructor]
@@ -276,9 +285,10 @@ void MainComponent::resized()
     ipButton->setBounds (933, 631, 82, 24);
     portButton->setBounds (1014, 631, 82, 24);
     messageButton->setBounds (934, 654, 160, 24);
-    label->setBounds (780, 600, 75, 72);
+    pitchLabel->setBounds (768, 600, 100, 75);
     liveModeToggle->setBounds (344, 656, 56, 24);
     fileModeToggle->setBounds (344, 600, 48, 32);
+    playButton->setBounds (404, 605, 82, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -334,6 +344,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
         {
             // init the live audio input here
             inputSource = new AudioInputSource(deviceManager,0);
+            playButton->setVisible(false);
         }
         //[/UserButtonCode_liveModeToggle]
     }
@@ -346,9 +357,23 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
         if(state)
         {
             // init the file input here
+            FileChooser chooser (("Choose audio file to open"),File::nonexistent,"*",true);
+            chooser.browseForFileToOpen();
+            if(chooser.getResult().exists())
+            {
+                inputSource = new AudioInputSource(deviceManager,1);
+                inputSource->setFile(chooser.getResult());
+                playButton->setVisible(true);
+            }
         }
-        
+
         //[/UserButtonCode_fileModeToggle]
+    }
+    else if (buttonThatWasClicked == playButton)
+    {
+        //[UserButtonCode_playButton] -- add your button handler code here..
+        inputSource->filePlayingControl();
+        //[/UserButtonCode_playButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -403,6 +428,12 @@ void MainComponent::timerCallback()
     const StringArray devs(type->getDeviceNames(true));
     for (int i = 0; i < devs.size(); ++i)
         inputSettingComboox->addItem (devs[i], i + 1);
+    if(inputSource) // if there exists some audio stuff
+    {
+        // get pitch value and possible technique detection
+        String currentNote = midiOut->getPitchName(inputSource->getCurrentPitch());
+        pitchLabel->setText(currentNote, dontSendNotification);
+    }
 }
 
 //[/MiscUserCode]
@@ -418,9 +449,9 @@ void MainComponent::timerCallback()
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="MainComponent" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="1152" initialHeight="720">
+                 parentClasses="public Component, public Timer" constructorParams=""
+                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
+                 overlayOpacity="0.330" fixedSize="1" initialWidth="1152" initialHeight="720">
   <BACKGROUND backgroundColour="ffffffff">
     <IMAGE pos="0 0 1152 720" resource="background_png" opacity="0.47199999999999997513"
            mode="0"/>
@@ -460,7 +491,7 @@ BEGIN_JUCER_METADATA
                 explicitFocusOrder="1" pos="1016 448 56 24" buttonText="Trill"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <COMBOBOX name="inputSetting" id="46804174f766b5b6" memberName="inputSettingComboox"
-            virtualName="" explicitFocusOrder="0" pos="80 608 160 24" editable="0"
+            virtualName="" explicitFocusOrder="0" pos="80 608 160 24" editable="1"
             layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="onsetTrheshold" id="927de484b7edf3d4" memberName="thresholdSlider"
           virtualName="" explicitFocusOrder="0" pos="560 576 64 120" thumbcol="ffff7f50"
@@ -483,10 +514,10 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="934 654 160 24" bgColOff="91ff7f50"
               bgColOn="ffff7f50" buttonText="send Message" connectedEdges="4"
               needsCallback="1" radioGroupId="0"/>
-  <LABEL name="new label" id="80b1d9d598c02eb4" memberName="label" virtualName=""
-         explicitFocusOrder="0" pos="780 600 75 72" edTextCol="ff000000"
-         edBkgCol="0" labelText="null" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="39.200000000000002842"
+  <LABEL name="pitch label" id="80b1d9d598c02eb4" memberName="pitchLabel"
+         virtualName="" explicitFocusOrder="0" pos="768 600 100 75" edTextCol="ff000000"
+         edBkgCol="0" labelText="Null" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
          bold="0" italic="0" justification="36"/>
   <TOGGLEBUTTON name="live mode toggle" id="8e4dd1df90e90e59" memberName="liveModeToggle"
                 virtualName="" explicitFocusOrder="0" pos="344 656 56 24" buttonText="Live"
@@ -494,6 +525,10 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="file mode toggle" id="6cfd233262633b62" memberName="fileModeToggle"
                 virtualName="" explicitFocusOrder="0" pos="344 600 48 32" buttonText="File"
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+  <TEXTBUTTON name="play Button" id="a10ee1e665024fb2" memberName="playButton"
+              virtualName="" explicitFocusOrder="0" pos="404 605 82 24" bgColOff="91ff7f50"
+              bgColOn="ffff7f50" buttonText="play" connectedEdges="15" needsCallback="1"
+              radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

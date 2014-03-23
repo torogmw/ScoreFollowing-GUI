@@ -38,10 +38,10 @@
                                                                     //[/Comments]
 */
 class MainComponent  : public Component,
+                       public Timer,
                        public ButtonListener,
                        public ComboBoxListener,
-                       public SliderListener,
-                       public Timer
+                       public SliderListener
 {
 public:
     //==============================================================================
@@ -98,9 +98,10 @@ private:
     ScopedPointer<TextButton> ipButton;
     ScopedPointer<TextButton> portButton;
     ScopedPointer<TextButton> messageButton;
-    ScopedPointer<Label> label;
+    ScopedPointer<Label> pitchLabel;
     ScopedPointer<ToggleButton> liveModeToggle;
     ScopedPointer<ToggleButton> fileModeToggle;
+    ScopedPointer<TextButton> playButton;
     Image cachedImage_background_png;
     Image cachedImage_musicpizzicato_png;
     Image cachedImage_musictremolo_png;

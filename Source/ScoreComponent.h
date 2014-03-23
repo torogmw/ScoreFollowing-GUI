@@ -71,7 +71,7 @@ private:
     bool isFollowingScore;
     File lastFileDropped;
     float currentTime;
-    
+
 
     //[/UserVariables]
 

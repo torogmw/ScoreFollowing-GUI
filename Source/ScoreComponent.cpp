@@ -64,6 +64,7 @@ ScoreComponent::ScoreComponent ()
 
     //[UserPreSize]
     modeToggleButton->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
+    
     //[/UserPreSize]
 
     setSize (800, 420);
@@ -241,7 +242,7 @@ void ScoreComponent::updateCursorPosition(int currentTime)
 }
 void ScoreComponent::timerCallback()
 {
-    
+
 }
 
 //[/MiscUserCode]
