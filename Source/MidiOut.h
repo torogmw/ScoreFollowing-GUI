@@ -27,17 +27,18 @@ public:
     /** Pointer for the midiOutput
      */
 	ScopedPointer <MidiOutput> midiOutput;
-    
+    HashMap<int, String> midiNameArray;
     /** Function to send the midi out of the program to the specified channel
      
      Only works for note-on and note-off messages, not control (i.e. pitch bend, mod, etc)
      */
     void sendMidiOut(int channel, int noteNumber, int velocity);
-    
+    String getPitchName(int midiNote) const;
 private:
     
     //the message to send
     MidiMessage outMessage;
+    String temp;
     
 };
 

@@ -33,11 +33,11 @@ public:
     void audioDeviceAboutToStart (AudioIODevice* device);
     void audioDeviceStopped();
     void setFile(File audioFile);
-    void stopPlaying();
+    void filePlayingControl();
     bool setToggle();
+    int getCurrentPitch() const;
     void violinTracking(float* data);
     
-    ViolinClassification* vc;
     
     
     
@@ -53,6 +53,8 @@ private:
     AudioSampleBuffer sampleBuffer = AudioSampleBuffer(1,RECORDSIZE); //the buffer is for store;
     AudioSampleBuffer calculateBuffer = AudioSampleBuffer(1,RECORDSIZE); //the buffer is throwing to the pitchtail
     AudioSampleBuffer tempBuffer = AudioSampleBuffer(1,RECORDSIZE); // this buffer is for sliding buffer window
+    ViolinClassification* vc;
+
     
     int choice;
     bool inputToggle;

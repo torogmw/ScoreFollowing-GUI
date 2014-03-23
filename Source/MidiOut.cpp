@@ -9,7 +9,19 @@
 MidiOut::MidiOut()
 {
     //=== Setup the MIDI Output Port ===//
-    
+    midiNameArray.set(0, "C");
+    midiNameArray.set(1, "C#/Db");
+    midiNameArray.set(2, "D");
+    midiNameArray.set(3, "D#/Eb");
+    midiNameArray.set(4, "E");
+    midiNameArray.set(5, "F");
+    midiNameArray.set(6, "F#/Gb");
+    midiNameArray.set(7, "G");
+    midiNameArray.set(8, "G#/Ab");
+    midiNameArray.set(9, "A");
+    midiNameArray.set(10, "A#/Bb");
+    midiNameArray.set(11, "B");
+    temp = "Null";
 #if JUCE_MAC || JUCE_LINUX
     
     //create a new device for the output
@@ -45,7 +57,15 @@ MidiOut::~MidiOut()
 	midiOutput = nullptr;
 }
 
-
+String MidiOut::getPitchName(int midiNote) const
+{
+    if(midiNote!=0){
+        temp.equalsIgnoreCase(midiNameArray[midiNote%12]);
+        return midiNameArray[midiNote%12];
+    }
+    else
+        return temp;
+}
 
 void MidiOut::sendMidiOut(int channel, int noteNumber, int velocity)
 {

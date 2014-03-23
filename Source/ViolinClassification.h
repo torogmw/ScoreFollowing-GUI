@@ -1,9 +1,9 @@
 //
 //  ViolinClassification.h
-//  PitchTail_1
+//  
 //
 //  Created by annie zhang on 11/15/13.
-//
+//  Modified by Minwei Gu on 3/21/14
 //
 
 #ifndef __PitchTail_1__ViolinClassification__

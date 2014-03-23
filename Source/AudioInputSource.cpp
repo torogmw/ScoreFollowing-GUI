@@ -47,7 +47,7 @@ void AudioInputSource::setFile(File audioFile)
             AudioFormatReader* tempReader = formatManager.createReaderFor(audioFile);
             fileSource = new AudioFormatReaderSource(tempReader,true);
             transportSource.setSource(fileSource,32768,&playingThread,44100);
-            transportSource.start();
+            //transportSource.start();
             inputToggle=1;
         }
     }
@@ -57,37 +57,57 @@ void AudioInputSource::setFile(File audioFile)
     }
 }
 
+int AudioInputSource::getCurrentPitch() const
+{
+    if (vc->pitch<45 || vc->pitch>92)
+        return 0;
+    else
+        return vc->pitch;
+}
 void AudioInputSource::audioDeviceIOCallback(const float **inputChannelData, int totalNumInputChannels, float **outputChannelData, int totalNumOutputChannels, int numSamples)
 {
+   
     
     if (choice == FILE_INPUT )
     {
-        audioSourcePlayer.audioDeviceIOCallback (inputChannelData, totalNumInputChannels, outputChannelData, totalNumOutputChannels, numSamples);   //pass the output to the player
-        if (bufferReady == true && ok && inputToggle == 1){
+        if (bufferReady == true && inputToggle == 1){
             violinTracking(calculateBuffer.getSampleData(0));
-            ok = false;
+            //ok = false;
+            bufferReady = false;
         }
-        
-        else if (bufferReady == false && inputToggle == 1)
+       
+        if (bufferReady == false && inputToggle == 1)
         {
-            if (bufferIndex < 87){
-                sampleBuffer.clear();
-                sampleBuffer.copyFrom(0, 0, outputChannelData[0], numSamples);
-                if (sampleBuffer.getSampleData(0))
-                    calculateBuffer.copyFrom(0, numSamples*bufferIndex, sampleBuffer, 0, 0, numSamples);
-                bufferIndex++;
-            }
-            else
-                bufferReady = true;
+            //std::cout<<*outputChannelData[0]<<std::endl;
+//            if (bufferIndex < 87){
+//                sampleBuffer.clear();
+//                sampleBuffer.copyFrom(0, 0, outputChannelData[0], numSamples);
+//                if (sampleBuffer.getSampleData(0))
+//                    calculateBuffer.copyFrom(0, numSamples*bufferIndex, sampleBuffer, 0, 0, numSamples);
+//                bufferIndex++;
+//            }
+//            else
+//                bufferReady = true;
+            sampleBuffer.clear();
+            sampleBuffer.copyFrom(0, 0, outputChannelData[0], numSamples);
+            tempBuffer.copyFrom(0, 0, calculateBuffer, 0, numSamples, RECORDSIZE - numSamples);
+            calculateBuffer.clear();
+            tempBuffer.copyFrom(0, RECORDSIZE - numSamples, sampleBuffer, 0, 0, numSamples);
+            calculateBuffer.copyFrom(0, 0, tempBuffer, 0, 0, RECORDSIZE);
+            tempBuffer.clear();
+            bufferReady = true;
         }
-        else
-        {
-            vc->pitch = 0;
-        }
-        
+//        else
+//        {
+//            //vc->pitch = 0;
+//        }
+        audioSourcePlayer.audioDeviceIOCallback (inputChannelData, totalNumInputChannels, outputChannelData, totalNumOutputChannels, numSamples);   //pass the output to the player
+
     }
     if (choice == LIVE_INPUT)
     {
+        //std::cout<<*inputChannelData[0]<<std::endl;
+
         for (int i = 0; i < numSamples; ++i)
             for (int j = totalNumOutputChannels; --j >= 0;)
                 outputChannelData[j][i] = 0;
@@ -107,11 +127,21 @@ void AudioInputSource::audioDeviceIOCallback(const float **inputChannelData, int
             calculateBuffer.copyFrom(0, 0, tempBuffer, 0, 0, RECORDSIZE);
             tempBuffer.clear();
             bufferReady = true;
-            
         }
         
     }
     
+}
+
+void AudioInputSource::filePlayingControl()
+{
+    if(choice==FILE_INPUT)
+    {
+        if(transportSource.isPlaying())
+            transportSource.stop();
+        else
+            transportSource.start();
+    }
 }
 
 void AudioInputSource::violinTracking(float* data)

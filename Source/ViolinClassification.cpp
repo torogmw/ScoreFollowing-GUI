@@ -1,9 +1,9 @@
 //
 //  ViolinClassification.cpp
-//  PitchTail_1
+//
 //
 //  Created by annie zhang on 11/15/13.
-//
+//  Modified by Minwei Gu on 3/21/14
 //
 
 #include "ViolinClassification.h"
@@ -126,6 +126,7 @@ bool ViolinClassification::valid()
     for (int i=0; i<inputData.size(); i++)
         sq_sum += (inputData[i] - mean)*(inputData[i] - mean);
     float var = 1000*sq_sum / (inputData.size()-1);
+    //cout<<var<<endl;
     if (var > threshold)
         return true;
     return false;
@@ -277,8 +278,6 @@ void ViolinClassification::chroma()
     smooth(targetEnergyPeaks);
     for (int i=0; i<numChunks; i++)
         pitch = targetEnergyPeaks[i]+STARTNOTE;
-    cout<<pitch<<endl;
-
 }
 
 
