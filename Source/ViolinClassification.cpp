@@ -111,7 +111,7 @@ void ViolinClassification::getReady(float* gWavDataIn)
         chroma();
         getFeatures();
         doClassify();
-        cout<<classLabel<<endl;
+        //cout<<classLabel<<endl;
     }
     else
         classLabel = "";    

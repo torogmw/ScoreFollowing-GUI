@@ -256,7 +256,7 @@ void MainComponent::paint (Graphics& g)
         if(inputSource->getCurrentTech() == 0)
         {
             g.setColour (Colours::yellow.withAlpha (1.00f));
-            g.drawImage (cachedImage_musicpizzicato_png,
+            g.drawImage (cachedImage_musicpizzicatolighted_png,
                          896, 66, 100, 100,
             0, 0, cachedImage_musicpizzicatolighted_png.getWidth(), cachedImage_musicpizzicato_png.getHeight());
 
@@ -271,6 +271,7 @@ void MainComponent::paint (Graphics& g)
     }
     if(isTremoloToggled)
     {
+        
         if(inputSource->getCurrentTech() == 2)
         {
             g.setColour (Colours::black.withAlpha (1.00f));
