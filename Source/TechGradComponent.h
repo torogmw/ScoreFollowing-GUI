@@ -17,14 +17,11 @@
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_27BA2BD040C84E9E__
-#define __JUCE_HEADER_27BA2BD040C84E9E__
+#ifndef __JUCE_HEADER_AD042BF8A32D7DB6__
+#define __JUCE_HEADER_AD042BF8A32D7DB6__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
-#include "TechGradComponent.h"
-#define LOWNOTE 51
-#define HIGHNOTE 90
 //[/Headers]
 
 
@@ -37,60 +34,44 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class ScoreComponent  : public Component,
-                        public Timer,
-                        public ButtonListener
+class TechGradComponent  : public Component
 {
 public:
     //==============================================================================
-    ScoreComponent ();
-    ~ScoreComponent();
+    TechGradComponent ();
+    ~TechGradComponent();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setFile(const File& file);                 // set and parse the score
-    void setRange(int totalTime);
-    void timerCallback();
-    // below should be private methods?
-    void updateCursorPosition(int timeIndex);
-    void setPitch(int pitchValue);
-    CriticalSection sharedMemory;
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
-    void buttonClicked (Button* buttonThatWasClicked);
 
+    // Binary resources:
+    static const char* yellowJacket_png;
+    static const int yellowJacket_pngSize;
+    static const char* shimirev_png;
+    static const int shimirev_pngSize;
+    static const char* gtcmtbye_png;
+    static const int gtcmtbye_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    DrawableRectangle currentPositionMarker;        // cursor to follow the score
-    Array<int> notes;                               // score notes buffer
-    Array<int> times;                              // score notes corresponding length
-    OwnedArray<DrawableRectangle> scores;
-    int visibleRange;
-    bool isFollowingScore;
-    File lastFileDropped;
-    int currentIndex;
-    int currentPitch;
-    ScopedPointer<DialogWindow> gtcmtByebye;
-    ScopedPointer<TechGradComponent> gradComponent;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<TextButton> resetButton;
-    ScopedPointer<TextButton> loadButton;
-    ScopedPointer<Label> scoreLabel;
-    ScopedPointer<Label> stateLabel;
-    ScopedPointer<ToggleButton> modeToggleButton;
+    Image cachedImage_yellowJacket_png;
+    Image cachedImage_shimirev_png;
+    Image cachedImage_gtcmtbye_png;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScoreComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TechGradComponent)
 };
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCE_HEADER_27BA2BD040C84E9E__
+#endif   // __JUCE_HEADER_AD042BF8A32D7DB6__

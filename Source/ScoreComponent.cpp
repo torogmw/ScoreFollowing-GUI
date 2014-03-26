@@ -64,7 +64,10 @@ ScoreComponent::ScoreComponent ()
 
     //[UserPreSize]
     modeToggleButton->setColour(TextButton::buttonColourId, Colour (0x91ff7f50));
-    
+    gtcmtByebye = new DialogWindow("Farewell GTCMT",
+                                   Colours::black,
+                                   true,
+                                   true);
     //[/UserPreSize]
 
     setSize (800, 420);
@@ -74,6 +77,7 @@ ScoreComponent::ScoreComponent ()
     isFollowingScore = false;
     currentPositionMarker.setFill (Colours::orangered.withAlpha (0.85f));
     addAndMakeVisible (currentPositionMarker);
+    gradComponent = new TechGradComponent();
     visibleRange = 0;
     currentIndex = 0;
     currentPitch = 0;
@@ -90,7 +94,8 @@ ScoreComponent::~ScoreComponent()
     scoreLabel = nullptr;
     stateLabel = nullptr;
     modeToggleButton = nullptr;
-
+    gradComponent = nullptr;
+    gtcmtByebye = nullptr;
 
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
@@ -178,6 +183,7 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_modeToggleButton] -- add your button handler code here..
         isFollowingScore = modeToggleButton->getToggleState();
+        
         //[/UserButtonCode_modeToggleButton]
     }
 
@@ -267,6 +273,12 @@ void ScoreComponent::timerCallback()
             updateCursorPosition(timeIndex);
             currentIndex++;
         }
+    }
+    if(isFollowingScore && currentIndex == notes.size() && scoreLabel->getText().equalsIgnoreCase("pomp and circumstance"))
+    {
+        addAndMakeVisible(gradComponent);
+        gtcmtByebye->showDialog("Farewell GTCMT", gradComponent, this, Colours::black, true);
+        stopTimer();
     }
 }
 

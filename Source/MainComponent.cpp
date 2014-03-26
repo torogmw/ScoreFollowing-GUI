@@ -271,14 +271,14 @@ void MainComponent::paint (Graphics& g)
     }
     if(isTremoloToggled)
     {
-        
+
         if(inputSource && inputSource->getCurrentTech() == 2)
         {
             g.setColour (Colours::black.withAlpha (1.00f));
             g.drawImage (cachedImage_musictremololighted_png,
                          896, 226, 100, 100,
                          0, 0, cachedImage_musictremololighted_png.getWidth(), cachedImage_musictremololighted_png.getHeight());
-            
+
         }
         else
         {
@@ -296,7 +296,7 @@ void MainComponent::paint (Graphics& g)
             g.drawImage (cachedImage_musictrilllighted_png,
                          896, 410, 100, 100,
                          0, 0, cachedImage_musictrilllighted_png.getWidth(), cachedImage_musicpizzicato_png.getHeight());
-            
+
         }
         else
         {
@@ -554,9 +554,9 @@ BEGIN_JUCER_METADATA
             layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="onsetTrheshold" id="927de484b7edf3d4" memberName="thresholdSlider"
           virtualName="" explicitFocusOrder="0" pos="560 576 64 120" thumbcol="ffff7f50"
-          rotarysliderfill="ffff7f50" textboxbkgd="ffffff" min="0" max="10"
-          int="0.5" style="LinearVertical" textBoxPos="TextBoxBelow" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          rotarysliderfill="ffff7f50" textboxbkgd="ffffff" min="0" max="1"
+          int="0.010000000000000000208" style="LinearVertical" textBoxPos="TextBoxBelow"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TEXTEDITOR name="send udp message" id="83ea72d3043d5a22" memberName="udpEditor"
               virtualName="" explicitFocusOrder="0" pos="936 584 150 24" bkgcol="fdfdfd"
               initialText="" multiline="0" retKeyStartsLine="0" readonly="0"

@@ -88,7 +88,7 @@ private:
     Image cachedImage_musicpizzicatolighted_png;
     Image cachedImage_musictremololighted_png;
     Image cachedImage_musictrilllighted_png;
-    
+
     //[/UserVariables]
 
     //==============================================================================
