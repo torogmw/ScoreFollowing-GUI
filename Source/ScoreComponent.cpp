@@ -203,6 +203,7 @@ void ScoreComponent::setFile(const juce::File &file)
         tokens.addTokens (rawText[i], " ", "\"");
         notes.insert(i, tokens[0].getIntValue());
         times.insert(i, tokens[1].getIntValue());
+        std::cout<<tokens[1].getIntValue()<<" ";
         totalLength+=tokens[1].getIntValue();
     }
     setRange(totalLength);
@@ -214,7 +215,7 @@ void ScoreComponent::setRange(int totalTime)
     // scorllbar maybe added here
     // calculate position, height and width of the score rectangle based on the total time
     float noteYInterval = 360/(HIGHNOTE-LOWNOTE+1);
-    float noteXInterval = 780/visibleRange;
+    float noteXInterval = 780.0/visibleRange;
     int noteIndex = 0;
     for (int i = 0; i<notes.size(); i++)
     {
@@ -241,7 +242,7 @@ void ScoreComponent::updateCursorPosition(int timeIndex)
 {
     if(notes.size()>0)
     {
-        float noteXInterval = 780/visibleRange;
+        float noteXInterval = 780.0/visibleRange;
         currentPositionMarker.setVisible(true);
         currentPositionMarker.setRectangle (Rectangle<float> (10+noteXInterval*timeIndex,30,2,360));
     }
