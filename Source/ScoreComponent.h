@@ -46,13 +46,14 @@ public:
     ~ScoreComponent();
 
     //==============================================================================
-    //[UserMethods]     -- You can add your own custom methods in this section.
+    //[UserMethods]     -- You can add your own crustom methods in this section.
     void setFile(const File& file);                 // set and parse the score
     void setRange(int totalTime);
-    void timerCallback() override;
-    // below should be private methods
-
-    void updateCursorPosition(int currentTime);
+    void timerCallback();
+    // below should be private methods?
+    void updateCursorPosition(int timeIndex);
+    void setPitch(int pitchValue);
+    CriticalSection sharedMemory;
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -70,9 +71,8 @@ private:
     int visibleRange;
     bool isFollowingScore;
     File lastFileDropped;
-    float currentTime;
-
-
+    int currentIndex;
+    int currentPitch;
     //[/UserVariables]
 
     //==============================================================================

@@ -75,6 +75,8 @@ ScoreComponent::ScoreComponent ()
     currentPositionMarker.setFill (Colours::orangered.withAlpha (0.85f));
     addAndMakeVisible (currentPositionMarker);
     visibleRange = 0;
+    currentIndex = 0;
+    currentPitch = 0;
     //[/Constructor]
 }
 
@@ -157,6 +159,7 @@ void ScoreComponent::buttonClicked (Button* buttonThatWasClicked)
         scores.clear();
         stopTimer();
         updateCursorPosition(0);
+        currentIndex = 0;
         repaint();
         //[/UserButtonCode_resetButton]
     }
@@ -221,19 +224,26 @@ void ScoreComponent::setRange(int totalTime)
         scores.add(temp);
         noteIndex+=times[i];
     }
-    updateCursorPosition(1);        // start at the very beginning
+    updateCursorPosition(0.2);        // start at the very beginning
     repaint();
 
 }
 
 
-void ScoreComponent::updateCursorPosition(int currentTime)
+void ScoreComponent::setPitch(int pitchValue)
+{
+    sharedMemory.enter();
+    currentPitch = pitchValue;
+    sharedMemory.exit();
+}
+
+void ScoreComponent::updateCursorPosition(int timeIndex)
 {
     if(notes.size()>0)
     {
         float noteXInterval = 780/visibleRange;
         currentPositionMarker.setVisible(true);
-        currentPositionMarker.setRectangle (Rectangle<float> (10+noteXInterval*currentTime,30,2,360));
+        currentPositionMarker.setRectangle (Rectangle<float> (10+noteXInterval*timeIndex,30,2,360));
     }
     else
     {
@@ -242,7 +252,21 @@ void ScoreComponent::updateCursorPosition(int currentTime)
 }
 void ScoreComponent::timerCallback()
 {
-    
+    // start to listen?
+    if(isFollowingScore && currentIndex < notes.size())
+    {
+        sharedMemory.enter();
+        //std::cout<<currentPitch<<std::endl;
+        int temp = currentPitch;
+        sharedMemory.exit();
+        if (abs (notes[currentIndex] - temp) == 12 || notes[currentIndex] == temp)
+        {
+            int timeIndex = 0;
+            for (int j = 0; j<=currentIndex; j++) timeIndex+=times[j];
+            updateCursorPosition(timeIndex);
+            currentIndex++;
+        }
+    }
 }
 
 //[/MiscUserCode]

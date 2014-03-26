@@ -59,7 +59,7 @@ MainComponent::MainComponent ()
     inputSettingComboox->addListener (this);
 
     addAndMakeVisible (thresholdSlider = new Slider ("onsetTrheshold"));
-    thresholdSlider->setRange (0, 10, 0.5);
+    thresholdSlider->setRange (0, 1, 0.01);
     thresholdSlider->setSliderStyle (Slider::LinearVertical);
     thresholdSlider->setTextBoxStyle (Slider::TextBoxBelow, false, 80, 20);
     thresholdSlider->setColour (Slider::thumbColourId, Colours::coral);
@@ -253,7 +253,7 @@ void MainComponent::paint (Graphics& g)
     //[UserPaint] Add your own custom painting code here..
     if(isPizzToggled)
     {
-        if(inputSource->getCurrentTech() == 0)
+        if(inputSource && inputSource->getCurrentTech() == 0)
         {
             g.setColour (Colours::yellow.withAlpha (1.00f));
             g.drawImage (cachedImage_musicpizzicatolighted_png,
@@ -272,7 +272,7 @@ void MainComponent::paint (Graphics& g)
     if(isTremoloToggled)
     {
         
-        if(inputSource->getCurrentTech() == 2)
+        if(inputSource && inputSource->getCurrentTech() == 2)
         {
             g.setColour (Colours::black.withAlpha (1.00f));
             g.drawImage (cachedImage_musictremololighted_png,
@@ -290,7 +290,7 @@ void MainComponent::paint (Graphics& g)
     }
     if(isTrillToggled)
     {
-        if(inputSource->getCurrentTech() == 3)
+        if(inputSource && inputSource->getCurrentTech() == 3)
         {
             g.setColour (Colours::yellow.withAlpha (1.00f));
             g.drawImage (cachedImage_musictrilllighted_png,
@@ -405,6 +405,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
                 inputSource->setFile(chooser.getResult());
                 playButton->setVisible(true);
             }
+            updateToggleState();
         }
 
         //[/UserButtonCode_fileModeToggle]
@@ -474,6 +475,7 @@ void MainComponent::timerCallback()
     {
         // get pitch value and possible technique detection
         String currentNote = midiOut->getPitchName(inputSource->getCurrentPitch());
+        component->setPitch(inputSource->getCurrentPitch());
         pitchLabel->setText(currentNote, dontSendNotification);
         repaint();
     }
