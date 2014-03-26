@@ -36,7 +36,7 @@ TechGradComponent::TechGradComponent ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (480, 320);
+    setSize (600, 400);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -64,17 +64,17 @@ void TechGradComponent::paint (Graphics& g)
 
     g.setColour (Colours::black);
     g.drawImage (cachedImage_yellowJacket_png,
-                 331, 170, 120, 120,
+                 415, 210, 150, 150,
                  0, 0, cachedImage_yellowJacket_png.getWidth(), cachedImage_yellowJacket_png.getHeight());
 
     g.setColour (Colours::black);
     g.drawImage (cachedImage_shimirev_png,
-                 27, 168, 120, 120,
+                 23, 210, 150, 150,
                  0, 0, cachedImage_shimirev_png.getWidth(), cachedImage_shimirev_png.getHeight());
 
     g.setColour (Colours::black);
     g.drawImage (cachedImage_gtcmtbye_png,
-                 19, 42, 445, 54,
+                 23, 50, 549, 62,
                  0, 0, cachedImage_gtcmtbye_png.getWidth(), cachedImage_gtcmtbye_png.getHeight());
 
     //[UserPaint] Add your own custom painting code here..
@@ -105,12 +105,12 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="TechGradComponent" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="480" initialHeight="320">
+                 fixedSize="1" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ffe2d782">
-    <IMAGE pos="331 170 120 120" resource="yellowJacket_png" opacity="1"
+    <IMAGE pos="415 210 150 150" resource="yellowJacket_png" opacity="1"
            mode="0"/>
-    <IMAGE pos="27 168 120 120" resource="shimirev_png" opacity="1" mode="0"/>
-    <IMAGE pos="19 42 445 54" resource="gtcmtbye_png" opacity="1" mode="0"/>
+    <IMAGE pos="23 210 150 150" resource="shimirev_png" opacity="1" mode="0"/>
+    <IMAGE pos="23 50 549 62" resource="gtcmtbye_png" opacity="1" mode="0"/>
   </BACKGROUND>
 </JUCER_COMPONENT>
 
