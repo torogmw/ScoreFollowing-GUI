@@ -121,6 +121,9 @@ MainComponent::MainComponent ()
     playButton->setColour (TextButton::buttonColourId, Colour (0x91ff7f50));
     playButton->setColour (TextButton::buttonOnColourId, Colours::coral);
 
+    addAndMakeVisible (Keyboard = new KeyboardComponent());
+    Keyboard->setName ("keyboard UI");
+
     cachedImage_background_png = ImageCache::getFromMemory (background_png, background_pngSize);
     cachedImage_musicpizzicato_png = ImageCache::getFromMemory (musicpizzicato_png, musicpizzicato_pngSize);
     cachedImage_musictremolo_png = ImageCache::getFromMemory (musictremolo_png, musictremolo_pngSize);
@@ -178,6 +181,7 @@ MainComponent::~MainComponent()
     liveModeToggle = nullptr;
     fileModeToggle = nullptr;
     playButton = nullptr;
+    Keyboard = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -312,7 +316,7 @@ void MainComponent::paint (Graphics& g)
 void MainComponent::resized()
 {
     settingComponent->setBounds (48, 520, 1072, 184);
-    component->setBounds (53, 79, 800, 420);
+    component->setBounds (55, 80, 800, 420);
     pizzToggle->setBounds (1016, 104, 56, 24);
     tremoloToggle->setBounds (1016, 264, 80, 24);
     trillToggle->setBounds (1016, 448, 56, 24);
@@ -326,6 +330,7 @@ void MainComponent::resized()
     liveModeToggle->setBounds (344, 656, 56, 24);
     fileModeToggle->setBounds (344, 600, 48, 32);
     playButton->setBounds (404, 605, 82, 24);
+    Keyboard->setBounds (20, 109, 45, 360);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -538,7 +543,7 @@ BEGIN_JUCER_METADATA
                   virtualName="" explicitFocusOrder="0" pos="48 520 1072 184" title="Controllers"
                   textpos="36"/>
   <GENERICCOMPONENT name="new component" id="2563438c080bf7b7" memberName="component"
-                    virtualName="" explicitFocusOrder="0" pos="53 79 800 420" class="ScoreComponent"
+                    virtualName="" explicitFocusOrder="0" pos="55 80 800 420" class="ScoreComponent"
                     params=""/>
   <TOGGLEBUTTON name="pizzicato" id="5bb0f831f30fb96f" memberName="pizzToggle"
                 virtualName="" explicitFocusOrder="1" pos="1016 104 56 24" buttonText="Pizz"
@@ -588,6 +593,9 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="404 605 82 24" bgColOff="91ff7f50"
               bgColOn="ffff7f50" buttonText="play" connectedEdges="15" needsCallback="1"
               radioGroupId="0"/>
+  <GENERICCOMPONENT name="keyboard UI" id="c1ec5f3e89e8825c" memberName="Keyboard"
+                    virtualName="" explicitFocusOrder="0" pos="20 109 45 360" class="KeyboardComponent"
+                    params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

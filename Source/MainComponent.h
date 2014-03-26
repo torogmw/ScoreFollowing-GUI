@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "ScoreComponent.h"
+#include "KeyboardComponent.h"
 #include "AudioInputSource.h"
 #include "MidiOut.h"
 //[/Headers]
@@ -107,6 +108,7 @@ private:
     ScopedPointer<ToggleButton> liveModeToggle;
     ScopedPointer<ToggleButton> fileModeToggle;
     ScopedPointer<TextButton> playButton;
+    ScopedPointer<KeyboardComponent> Keyboard;
     Image cachedImage_background_png;
     Image cachedImage_musicpizzicato_png;
     Image cachedImage_musictremolo_png;
